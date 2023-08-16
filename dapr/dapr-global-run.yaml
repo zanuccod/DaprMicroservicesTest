@@ -1,0 +1,12 @@
+version: 1
+common: # optional section for variables shared across apps
+  resourcesPath: C:\\Users\\ricopegnata\\source\\repos\\DaprMicroservicesTest\\dapr\\components # any dapr resources to be shared across apps
+  configFilePath: C:\\Users\\ricopegnata\\source\\repos\\DaprMicroservicesTest\\dapr\\config.yaml
+  env:  # any environment variable shared across apps
+    DEBUG: true
+apps:
+  - appID: service-a # optional
+    appDirPath: C:\Users\ricopegnata\source\repos\DaprMicroservicesTest\ServiceA.WebApi # REQUIRED
+    appProtocol: https
+    appPort: 5273
+    command: ["dotnet", "run"]
