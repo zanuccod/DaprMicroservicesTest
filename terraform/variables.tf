@@ -21,3 +21,46 @@ variable "key_vault_sku_name" {
   default     = "standard"
   description = "The name of the SKU used to purchase Key Vault. Possible values are standard and premium."
 }
+
+variable "key_vault_secret_permissions" {
+  type        = list(string)
+  description = "List of secret permissions."
+  default     = ["Delete", "Purge", "Recover", "Get", "List", "Set"]
+}
+
+variable "key_vault_secret-redis-username-key" {
+  type        = string
+  description = "Example key for the azure keyvault secrets"
+  default     = "RedisUsername"
+}
+
+variable "key_vault_secret-redis-username-value" {
+  type        = string
+  description = "Example key for the azure keyvault secrets"
+  default     = "RedisUsername_KeyVault"
+}
+
+variable "key_vault_secret-redis-password-key" {
+  type        = string
+  description = "Example key for the azure keyvault secrets"
+  default     = "RedisPassword"
+}
+
+variable "key_vault_secret-redis-password-value" {
+  type        = string
+  description = "Example key for the azure keyvault secrets"
+  default     = "RedisPassword_KeyVault"
+}
+
+variable "key_vault_secret-redis-instance-key" {
+  type        = string
+  description = "Example key for the azure keyvault secrets"
+  default     = "RedisInstance"
+}
+
+variable "key_vault_secret-redis-instance-value" {
+  type        = string
+  description = "Example key for the azure keyvault secrets"
+  default     = "false"
+}
+
