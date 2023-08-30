@@ -1,21 +1,24 @@
 apiVersion: dapr.io/v2alpha1
-kind: Subscription
+kind: Component
 metadata:
-  name: broker-pubsub
+  name: pubsub
   namespace: local-dev
 spec:
   type: pubsub.rabbitmq
   version: v1
   metadata:
   - name: host
-    value: "amqp://admin:password@localhost:5672"
+    value: "amqp://localhost:5672"
   - name: durable
     value: "false"
   - name: deletedWhenUnused
-    value: "false"
+    value: "true"
   - name: autoAck
     value: "false"
   - name: reconnectWait
     value: "0"
   - name: concurrency
     value: parallel
+scopes:
+- service-a
+- service-b

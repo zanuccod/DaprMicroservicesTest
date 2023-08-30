@@ -11,7 +11,9 @@ builder.Configuration
     .AddDaprSecretStore("secret-store", new DaprClientBuilder().Build());
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddDapr();
 
 builder.Services.AddLogging(loggingBuilder =>
 {
@@ -35,6 +37,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthorization();
 app.MapDefaultControllerRoute();
+app.UseRouting();
+
+app.UseCloudEvents();
 app.MapControllers();
+app.MapSubscribeHandler();
 
 app.Run();

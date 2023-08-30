@@ -15,13 +15,15 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "components", "components", "{2EE8C125-248D-4B9D-9E45-565A7E210414}"
 	ProjectSection(SolutionItems) = preProject
 		dapr\components\developmet_secrets.json = dapr\components\developmet_secrets.json
+		dapr\components\local-datastore.yaml = dapr\components\local-datastore.yaml
 		dapr\components\local-pubsub.yaml = dapr\components\local-pubsub.yaml
 		dapr\components\local-secretstore.yaml = dapr\components\local-secretstore.yaml
+		dapr\components\production-pubsub.yaml = dapr\components\production-pubsub.yaml
 		dapr\components\production-secretstore.yaml = dapr\components\production-secretstore.yaml
 		dapr\components\statestore.yaml = dapr\components\statestore.yaml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceB.WebApi", "ServiceB.WebApi\ServiceB.WebApi.csproj", "{EE2397AC-2FD3-4E1E-A545-93D30AE5B79D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceB.WebApi", "ServiceB.WebApi\ServiceB.WebApi.csproj", "{EE2397AC-2FD3-4E1E-A545-93D30AE5B79D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
