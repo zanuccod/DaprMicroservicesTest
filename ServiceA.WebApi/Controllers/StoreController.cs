@@ -21,23 +21,38 @@ namespace ServiceA.WebApi.Controllers
             _logger = logger;
         }
 
-        [HttpPost("GetValueFromKey")]
-        [Topic(PUBSUB_COMPONENT_NAME, TOPIC_NAME)]
-        public async Task<ActionResult<string>> GetValueFromKey(MessageKey messageKey)
+        [HttpGet("GetValueFromKey")]
+        public async Task<ActionResult<string>> GetValueFromKey(string key)
         {
-            if (messageKey == null
-                || string.IsNullOrEmpty(messageKey.Key))
+            if (string.IsNullOrEmpty(key))
             {
                 return BadRequest("Give a valid key");
             }
 
-            var key = messageKey.Key;
             var value = _config[key];
 
             _logger.LogInformation($"\nKey: {key}\nValue: {value}");
             return string.IsNullOrEmpty(value)
                 ? await Task.FromResult(NotFound(key))
                 : await Task.FromResult(Ok(_config[key]));
+        }
+
+        [HttpPost("GetValueFromKey")]
+        [Topic(PUBSUB_COMPONENT_NAME, TOPIC_NAME)]
+        public Task LogValueFromKey(MessageKey messageKey)
+        {
+            if (messageKey == null
+                || string.IsNullOrEmpty(messageKey.Key))
+            {
+                _logger.LogWarning("Give a valid key");
+            }
+
+            var key = messageKey.Key;
+            var value = _config[key];
+
+            _logger.LogInformation($"\nKey: {key}\nValue: {value}");
+
+            return Task.CompletedTask;
         }
     }
 }
