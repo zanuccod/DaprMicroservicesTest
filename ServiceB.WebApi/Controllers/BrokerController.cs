@@ -32,7 +32,6 @@ namespace ServiceB.WebApi.Controllers
 
             using var client = new DaprClientBuilder().Build();
             await client.PublishEventAsync(PUBSUB_COMPONENT_NAME, TOPIC_NAME, messageObj);
-            
             return Ok();
         }
 
@@ -49,13 +48,53 @@ namespace ServiceB.WebApi.Controllers
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 string? result = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Received for key <{key}> the value <{result}>");
-                return Ok(result);
+                if (!string.IsNullOrEmpty(result))
+                {
+                    _logger.LogInformation($"Received for key <{key}> the value <{result}>");
+                    return Ok(result);
+                }
             }
-            else
+            return NotFound(response);
+        }
+
+        [HttpGet("GetValueFromStore")]
+        public async Task<ActionResult<string>> GetValueFromStore(string key)
+        {
+            if (string.IsNullOrEmpty(key))
             {
-                return NotFound(response);
+                return BadRequest("Give a valid key");
             }
+
+            var httpClient = DaprClient.CreateInvokeHttpClient("service-a");
+            var response = await httpClient.GetAsync($"api/Store/GetStoreValueFromKey?key={key}");
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string? result = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(result))
+                {
+                    _logger.LogInformation($"Received for key <{key}> the value <{result}>");
+                    return Ok(result);
+                }
+            }
+            return NotFound(response);
+        }
+
+        [HttpPost("AddValueToStore")]
+        public async Task<ActionResult<string>> AddValueToStore(KeyValue keyValue)
+        {
+            if (keyValue is null
+                || !keyValue.IsValid())
+            {
+                return BadRequest("The given input is not valid");
+            }
+
+            var httpClient = DaprClient.CreateInvokeHttpClient("service-a");
+            var response = await httpClient.PostAsJsonAsync<KeyValue>($"api/Store/AddStoreValue", keyValue);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return Ok();
+            }
+            return Forbid();
         }
     }
 }
