@@ -49,13 +49,6 @@ resource "azurerm_key_vault_secret" "kv-redispassword-key" {
   depends_on   = [azurerm_key_vault.kv]
 }
 
-resource "azurerm_key_vault_secret" "kv-redisinstance-key" {
-  key_vault_id = azurerm_key_vault.kv.id
-  name         = var.key_vault_secret-redis-instance-key
-  value        = var.key_vault_secret-redis-instance-value
-  depends_on   = [azurerm_key_vault.kv]
-}
-
 resource "azurerm_servicebus_namespace" "sb" {
   name                = var.service_bus_namespace_name
   resource_group_name = var.resource_group_name
@@ -84,4 +77,64 @@ resource "azurerm_servicebus_topic_authorization_rule" "sb-topic-sap" {
   listen = true
   send   = true
   manage = true
+}
+
+resource "azurerm_cosmosdb_account" "cosmosdb" {
+  name                = var.cosmosdb_account_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  offer_type          = "Standard"
+  kind                = "MongoDB"
+
+  consistency_policy {
+    consistency_level = "Session"
+  }
+
+  geo_location {
+    location          = var.location
+    failover_priority = 0
+  }
+}
+
+resource "azurerm_cosmosdb_mongo_database" "cosmosdb-mongodb" {
+  name                = var.mongodb_database_name
+  resource_group_name = var.resource_group_name
+  account_name        = var.cosmosdb_account_name
+
+  depends_on = [azurerm_cosmosdb_account.cosmosdb]
+}
+
+resource "azurerm_cosmosdb_mongo_collection" "cosmosdb-mongodb-collection" {
+  name                = var.mongodb_collection_name
+  resource_group_name = var.resource_group_name
+  account_name        = var.cosmosdb_account_name
+  database_name       = var.mongodb_collection_database_name
+
+  index {
+    keys   = ["_id"]
+    unique = true
+  }
+
+  depends_on = [azurerm_cosmosdb_mongo_database.cosmosdb-mongodb]
+}
+
+resource "azurerm_key_vault_secret" "cosoms-db-connection-string" {
+  key_vault_id = azurerm_key_vault.kv.id
+  name         = "cosmosdbConnectionString"
+  value        = azurerm_cosmosdb_account.cosmosdb.connection_strings[0]
+  depends_on   = [azurerm_cosmosdb_mongo_collection.cosmosdb-mongodb-collection]
+}
+
+resource "azurerm_key_vault_secret" "cosoms-db-database-name" {
+  key_vault_id = azurerm_key_vault.kv.id
+  name         = "cosmosdbDatabaseName"
+  value        = var.mongodb_database_name
+  depends_on   = [azurerm_cosmosdb_mongo_collection.cosmosdb-mongodb-collection]
+}
+
+resource "azurerm_key_vault_secret" "cosoms-db-collection-name" {
+  key_vault_id = azurerm_key_vault.kv.id
+  name         = "cosmosdbCollectionName"
+  value        = var.mongodb_collection_database_name
+  depends_on   = [azurerm_cosmosdb_mongo_collection.cosmosdb-mongodb-collection]
 }

@@ -12,3 +12,9 @@ output "service_bus_topic_name" {
   description = "Name of the created Service Bus topic"
   value       = azurerm_servicebus_topic.sb-topic.name
 }
+
+output "cosmosdb_connection_string" {
+  description = "Connection string for the Azure Cosmos DB account"
+  value       = azurerm_cosmosdb_account.cosmosdb.connection_strings
+  sensitive   = true
+}
